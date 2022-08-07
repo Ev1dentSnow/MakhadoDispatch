@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "d
 import yaml from "js-yaml";
 import fs from "fs";
 import { Aircraft, YamlDoc } from "..";
+import { buildStatusEmbed } from "../util/embed";
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -50,19 +51,24 @@ module.exports = {
 			}	
 		};
 
-		// Read existing YAML file
+		// Update existing YAML file
 		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync("dist/config/fleet.yaml", "utf-8"));
 		yamlDoc.aircraft.push(newAircraft);
 		fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
 
-		// Edit status embed to add new aircraft to it (only if the embed actually exists)
+		// Delete old status embed to make to new one with new aircraft in it (only if an embed actually exists in the first place)
 		if (yamlDoc.lastStatusChannelID != null && yamlDoc.lastStatusMessageID != null) {
 			const channel = await interaction.client.channels.fetch(<string>yamlDoc.lastStatusChannelID) as TextChannel;
 			await channel.messages.delete(yamlDoc.lastStatusMessageID)
 				.catch(error => console.log(error));
 		}
 
-		await interaction.reply({content: `${registration} added to fleet successfully`, ephemeral: true});
+		buildStatusEmbed(yamlDoc)
+			.then(async messageComponents => {
+				//@ts-ignore
+				await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row] });
+			})
+			.catch(async reason => await interaction.reply({ content: `${registration} added to fleet successfully`, ephemeral: true }));
 
 	}
 };
