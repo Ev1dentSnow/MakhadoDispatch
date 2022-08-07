@@ -12,5 +12,7 @@ module.exports = {
 			await interaction.reply({ content: "This command is for use by management only", ephemeral: true });
 			return;
 		}
+		// TODO: implement remove booking logic
+
 	}
 };
