@@ -59,16 +59,15 @@ module.exports = {
 		// Delete old status embed to make to new one with new aircraft in it (only if an embed actually exists in the first place)
 		if (yamlDoc.lastStatusChannelID != null && yamlDoc.lastStatusMessageID != null) {
 			const channel = await interaction.client.channels.fetch(<string>yamlDoc.lastStatusChannelID) as TextChannel;
-			await channel.messages.delete(yamlDoc.lastStatusMessageID)
-				.catch(error => console.log(error));
+			channel.messages.delete(yamlDoc.lastStatusMessageID)
+				.then(item => {
+					// Send new embed with updated fleet list
+					buildStatusEmbed(yamlDoc)
+					//@ts-ignore
+						.then(async messageComponents => await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row]}))
+						.catch(async reason => await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true}));})
+				.catch(async error => await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true}));
 		}
-
-		buildStatusEmbed(yamlDoc)
-			.then(async messageComponents => {
-				//@ts-ignore
-				await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row] });
-			})
-			.catch(async reason => await interaction.reply({ content: `${registration} added to fleet successfully`, ephemeral: true }));
 
 	}
 };
