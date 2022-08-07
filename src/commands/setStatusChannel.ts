@@ -1,0 +1,47 @@
+import { CommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
+import fs from "fs";
+import yaml from "js-yaml";
+import { YamlDoc } from "..";
+import { buildStatusEmbed } from "../util/embed";
+
+module.exports = {
+	data: new SlashCommandBuilder()
+		.setName("set-fleet-status-channel")
+		.setDescription("sets the current channel as the channel for the Makhado fleet status"),
+
+	async execute(interaction: CommandInteraction) {
+
+		// Ensure only management can use this command
+		const allowedMembers = ["238360513082294284", "882335741701664810", "714804238881914902", "702504517261983755"];
+
+		if (!allowedMembers.includes(interaction.user.id)) {
+			return;
+		}
+
+		// Check if there's an existing status message in another channel which needs to be deleted
+		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync("dist/config/fleet.yaml", "utf-8"));
+
+		if (yamlDoc.lastStatusChannelID != null) {
+			const channel = interaction.client.channels.cache.get(yamlDoc.lastStatusChannelID) as TextChannel;
+			await channel.messages.delete(<string>yamlDoc.lastStatusMessageID).catch(error => console.log(error));
+		}
+
+		// Create and send the fleet status embed
+		buildStatusEmbed(yamlDoc)
+			.then(async messageComponents => {
+				//@ts-ignore
+				const messageID = await (await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row], fetchReply: true })).id;
+				// Write to file
+				yamlDoc.lastStatusChannelID = interaction.channelId;
+				yamlDoc.lastStatusMessageID = messageID;
+				fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+			})
+			.catch(async reason => {
+				await interaction.reply({content: "This channel has been set as the fleet status channel successfully", ephemeral: true});
+				// Write to file
+				yamlDoc.lastStatusChannelID = interaction.channelId;
+				fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+				return;
+			});
+	}
+};
