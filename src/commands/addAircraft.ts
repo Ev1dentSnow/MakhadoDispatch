@@ -49,7 +49,7 @@ module.exports = {
 		const dir = path.join(__dirname, "../config/fleet.yaml");
 		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync(dir, "utf-8"));
 
-		if (yamlDoc.aircraft.length > 0) {
+		if (yamlDoc.aircraft != null) {
 			yamlDoc.aircraft.forEach(async (element, index) => {
 				if (Object.keys(element)[index] === registration) {
 					await interaction.reply({ content: "An aircraft with this registration already exists. Use /remove-aircraft to remove it first", ephemeral: true });
