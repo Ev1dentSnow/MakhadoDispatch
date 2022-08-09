@@ -28,7 +28,7 @@ export interface YamlDoc {
 
 const clientOptions: any = {
 	intents: [GatewayIntentBits.Guilds],
-	presence: {activities: [{ name: "and winning against Bonair's fleet", type: ActivityType.Competing }]},
+	presence: {activities: [{ name: "over Makhado's fleet", type: ActivityType.Watching }]},
 };
 
 //@ts-ignore

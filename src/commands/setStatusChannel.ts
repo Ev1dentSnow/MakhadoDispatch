@@ -11,10 +11,10 @@ module.exports = {
 
 	async execute(interaction: CommandInteraction) {
 
-		// Ensure only management can use this command
-		const allowedMembers = ["238360513082294284", "882335741701664810", "714804238881914902", "702504517261983755"];
-
-		if (!allowedMembers.includes(interaction.user.id)) {
+		// Enusre only management can use this command
+		const requiredRole = "1005835216025305178";
+		if (!interaction.guild?.members.cache.get(interaction.user.id)?.roles.cache.has(requiredRole)) {
+			await interaction.reply({ content: "This command is for use by management only", ephemeral: true });
 			return;
 		}
 

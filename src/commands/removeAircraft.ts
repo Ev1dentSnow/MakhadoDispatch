@@ -3,6 +3,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 import { YamlDoc } from "..";
 import { buildStatusEmbed } from "../util/embed";
+import { writeFile } from "fs/promises";
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,7 +18,6 @@ module.exports = {
 
 		// Enusre only management can use this command
 		const requiredRole = "1005835216025305178";
-		//  || !interaction.guild?.members.cache.get(interaction.user.id)?.roles.cache.has(requiredRole)
 		if (!interaction.guild?.members.cache.get(interaction.user.id)?.roles.cache.has(requiredRole)) {
 			await interaction.reply({ content: "This command is for use by management only", ephemeral: true });
 			return;
@@ -42,10 +42,19 @@ module.exports = {
 				.then(item => {
 					// Send new embed with updated fleet list
 					buildStatusEmbed(yamlDoc)
-					//@ts-ignore
-						.then(async messageComponents => await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row]}))
-						.catch(async reason => await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true}));})
-				.catch(async error => await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true}));
+						.then(async messageComponents => {
+							//@ts-ignore
+							await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row]});
+							yamlDoc.lastStatusMessageID = null;
+							await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+						})
+						// If this rejects, it means that there are now no aircraft in the fleet so no embed should be sent and the lastStatusMessageID must be set to null
+						.catch(async reason => {
+							await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true});
+							yamlDoc.lastStatusMessageID = null;
+							await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+						});})
+				.catch(async error => console.log(error));
 		}
 
 	}

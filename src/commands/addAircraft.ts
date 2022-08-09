@@ -1,8 +1,10 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel, Utils } from "discord.js";
 import yaml from "js-yaml";
 import fs from "fs";
 import { Aircraft, YamlDoc } from "..";
 import { buildStatusEmbed } from "../util/embed";
+import { promisify } from "util";
+import { writeFile } from "fs/promises";
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -43,23 +45,41 @@ module.exports = {
 			}	
 		};
 
-		// Update existing YAML file
+		// Check if aircraft already exists. If not, update the YAML doc
 		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync("dist/config/fleet.yaml", "utf-8"));
+
+		yamlDoc.aircraft.forEach(async (element, index) => {
+			if (Object.keys(element)[index] === registration) {
+				await interaction.reply({ content: "An aircraft with this registration already exists. Use /remove-aircraft to remove it first", ephemeral: true });
+				return;
+			}
+		});
 		yamlDoc.aircraft.push(newAircraft);
-		fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
 
-		// Delete old status embed to make to new one with new aircraft in it (only if an embed actually exists in the first place)
-		if (yamlDoc.lastStatusChannelID != null && yamlDoc.lastStatusMessageID != null) {
-			const channel = await interaction.client.channels.fetch(<string>yamlDoc.lastStatusChannelID) as TextChannel;
-			channel.messages.delete(yamlDoc.lastStatusMessageID)
-				.then(item => {
-					// Send new embed with updated fleet list
-					buildStatusEmbed(yamlDoc)
+		// Delete old status embed to make to new one with new aircraft in it. If status message doesn't exist, create a new one without deletion
+		if (yamlDoc.lastStatusChannelID != null) {
+			if (yamlDoc.lastStatusMessageID != null) {
+				const channel = await interaction.client.channels.fetch(<string>yamlDoc.lastStatusChannelID) as TextChannel;
+				channel.messages.delete(yamlDoc.lastStatusMessageID)
+					.then(item => {
+						// Send new embed with updated fleet list
+						buildStatusEmbed(yamlDoc)
+							.then(async messageComponents => {
+								//@ts-ignore
+								const messageID = await (await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row], fetchReply: true})).id;
+								yamlDoc.lastStatusMessageID = messageID.slice();
+								await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+							});
+					});
+			} else {
+				buildStatusEmbed(yamlDoc)
+					.then(async messageComponents => {
 					//@ts-ignore
-						.then(async messageComponents => await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row]}))
-						.catch(async reason => await interaction.reply({content: `${registration} added to fleet successfully`, ephemeral: true}));})
-				.catch(async error => await interaction.reply({content: `${registration} added to fleet successfully`, ephemeral: true}));
+						const messageID = await (await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row], fetchReply: true })).id;
+						yamlDoc.lastStatusMessageID = messageID.slice();
+						await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+					});
+			}
 		}
-
 	}
 };

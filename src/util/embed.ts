@@ -22,7 +22,7 @@ export function buildStatusEmbed(yamlDocObject: YamlDoc) {
 			selectMenuItems.push({ label: `${Object.values(element)[0].icao} | ${Object.keys(element)[0]}`, description: "Edit status", value: Object.keys(element)[0] });
 		});
 
-		// If no data is in embed, don't send embed as it will result in an error
+		// If no data is in embed, don't send embed as it will result in an error. This promise can never reject when using the /add-aircraft command because then the length is > 0
 		if (embedFields.length === 0) {
 			reject("no fields in embed");
 		}
