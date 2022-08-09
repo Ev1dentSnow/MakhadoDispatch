@@ -5,7 +5,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import { handleInteraction } from "./interactions/interactionHandler";
 import path from "path";
-dotenv.config({path: ".env"});
+dotenv.config({path: path.join(__dirname, "../.env")});
 
 // TYPE DEFINITIONS
 export interface DiscordClient extends Client<boolean> {
