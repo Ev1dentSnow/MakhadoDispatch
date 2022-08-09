@@ -4,6 +4,7 @@ import loadCommands from "./loaders/loadCommands";
 import fs from "fs";
 import yaml from "js-yaml";
 import { handleInteraction } from "./interactions/interactionHandler";
+import path from "path";
 dotenv.config({path: ".env"});
 
 // TYPE DEFINITIONS
@@ -36,11 +37,11 @@ const client: DiscordClient = new Client(clientOptions);
 client.commands = loadCommands();
 
 // Create fleet YAML file if for some reason it does not exist
-const dir = "dist/config";
+const dir = path.join(__dirname, "/config");
 if (!fs.existsSync(dir)) {
 	fs.mkdirSync(dir);
 	const yamlTemplate = { lastStatusChannelID: null, lastStatusMessageID: null, aircraft: [] };
-	fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlTemplate));
+	fs.writeFileSync(path.join(dir, "/fleet.yaml"), yaml.dump(yamlTemplate));
 }
 
 client.once("ready", () => {

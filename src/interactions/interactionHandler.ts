@@ -3,6 +3,7 @@ import { DiscordClient } from "..";
 import fs from "fs";
 import yaml from "js-yaml";
 import { YamlDoc } from "..";
+import path from "path";
 
 /**
  * Dispatches the interaction appropriately depending on what type of interaction it is
@@ -44,7 +45,8 @@ export async function handleInteraction(interaction: BaseInteraction, client: Di
 	// Used purely for handling the update of the status of an aircraft in the fleet
 	else if (interaction.isModalSubmit()) {
 
-		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync("dist/config/fleet.yaml", "utf-8"));
+		const dir = path.join(__dirname, "../config/fleet.yaml");
+		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync(dir, "utf-8"));
 
 		// Prepare variables to be used in editing of status embed
 		let registration = "";
@@ -55,7 +57,7 @@ export async function handleInteraction(interaction: BaseInteraction, client: Di
 				registration = Object.keys(element)[0];
 				yamlDoc.aircraft[index][registration].status = interaction.fields.getTextInputValue(Object.keys(element)[0]);
 				yamlDoc.aircraft[index][registration].lastStatusEditUserID = interaction.user.id;
-				fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+				fs.writeFileSync(dir, yaml.dump(yamlDoc));
 			}
 		});
 		await interaction.reply({ content: "Aircraft status updated successfully", ephemeral: true });

@@ -3,7 +3,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 import { Aircraft, YamlDoc } from "..";
 import { buildStatusEmbed } from "../util/embed";
-import { promisify } from "util";
+import path from "path";
 import { writeFile } from "fs/promises";
 
 module.exports = {
@@ -46,7 +46,8 @@ module.exports = {
 		};
 
 		// Check if aircraft already exists. If not, update the YAML doc
-		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync("dist/config/fleet.yaml", "utf-8"));
+		const dir = path.join(__dirname, "../config/fleet.yaml");
+		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync(dir, "utf-8"));
 
 		yamlDoc.aircraft.forEach(async (element, index) => {
 			if (Object.keys(element)[index] === registration) {
@@ -68,7 +69,7 @@ module.exports = {
 								//@ts-ignore
 								const messageID = await (await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row], fetchReply: true})).id;
 								yamlDoc.lastStatusMessageID = messageID.slice();
-								await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+								await writeFile(dir, yaml.dump(yamlDoc));
 							});
 					});
 			} else {
@@ -77,7 +78,7 @@ module.exports = {
 					//@ts-ignore
 						const messageID = await (await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row], fetchReply: true })).id;
 						yamlDoc.lastStatusMessageID = messageID.slice();
-						await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+						await writeFile(dir, yaml.dump(yamlDoc));
 					});
 			}
 		}

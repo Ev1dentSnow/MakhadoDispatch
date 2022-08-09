@@ -4,6 +4,7 @@ import fs from "fs";
 import { YamlDoc } from "..";
 import { buildStatusEmbed } from "../util/embed";
 import { writeFile } from "fs/promises";
+import path from "path";
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,14 +27,15 @@ module.exports = {
 		const registration = <string>interaction.options.getString("registration");
 
 		// Read existing YAML file and delete aircraft if it exists
-		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync("dist/config/fleet.yaml", "utf-8"));
+		const dir = path.join(__dirname, "../config/fleet.yaml");
+		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync(dir, "utf-8"));
 
 		yamlDoc.aircraft.forEach((element, index) => {
 			if (Object.keys(element)[0] === registration) {
 				yamlDoc.aircraft.splice(index, 1);
 			}
 		});
-		fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+		fs.writeFileSync(dir, yaml.dump(yamlDoc));
 
 		// Delete old status embed to make to new one with new aircraft in it (only if an embed actually exists in the first place)
 		if (yamlDoc.lastStatusChannelID != null && yamlDoc.lastStatusMessageID != null) {
@@ -46,13 +48,13 @@ module.exports = {
 							//@ts-ignore
 							await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row]});
 							yamlDoc.lastStatusMessageID = null;
-							await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+							await writeFile(dir, yaml.dump(yamlDoc));
 						})
 						// If this rejects, it means that there are now no aircraft in the fleet so no embed should be sent and the lastStatusMessageID must be set to null
 						.catch(async reason => {
 							await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true});
 							yamlDoc.lastStatusMessageID = null;
-							await writeFile("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+							await writeFile(dir, yaml.dump(yamlDoc));
 						});})
 				.catch(async error => console.log(error));
 		}

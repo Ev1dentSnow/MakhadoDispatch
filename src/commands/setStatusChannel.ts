@@ -3,6 +3,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import { YamlDoc } from "..";
 import { buildStatusEmbed } from "../util/embed";
+import path from "path";
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,7 +20,8 @@ module.exports = {
 		}
 
 		// Check if there's an existing status message in another channel which needs to be deleted
-		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync("dist/config/fleet.yaml", "utf-8"));
+		const dir = path.join(__dirname, "../config/fleet.yaml");
+		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync(dir, "utf-8"));
 
 		if (yamlDoc.lastStatusChannelID != null) {
 			const channel = interaction.client.channels.cache.get(yamlDoc.lastStatusChannelID) as TextChannel;
@@ -34,13 +36,13 @@ module.exports = {
 				// Write to file
 				yamlDoc.lastStatusChannelID = interaction.channelId;
 				yamlDoc.lastStatusMessageID = messageID;
-				fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+				fs.writeFileSync(dir, yaml.dump(yamlDoc));
 			})
 			.catch(async reason => {
 				await interaction.reply({content: "This channel has been set as the fleet status channel successfully", ephemeral: true});
 				// Write to file
 				yamlDoc.lastStatusChannelID = interaction.channelId;
-				fs.writeFileSync("dist/config/fleet.yaml", yaml.dump(yamlDoc));
+				fs.writeFileSync(dir, yaml.dump(yamlDoc));
 				return;
 			});
 	}
