@@ -15,16 +15,8 @@ export function buildStatusEmbed(yamlDocObject: YamlDoc) {
     
 		yamlDocObject.aircraft.forEach(element => {
     
-			// Check if an aircraft has an active booking and set its field value layout to look accordingly
-			let nameValue = "";
-			let fieldValue = "";
-			if (Object.values(element)[0].booking.booked) {
-				nameValue = `:airplane: ${Object.values(element)[0].icao} | ${Object.keys(element)[0]}`;
-				fieldValue = `**[${Object.values(element)[0].booking.callsign}** - ***${Object.values(element)[0].booking.departureICAO} -> ${Object.values(element)[0].booking.arrivalICAO}*** **]** ${Object.values(element)[0].status} <@${Object.values(element)[0].lastStatusEditUserID}>`;
-			} else {
-				nameValue = `${Object.values(element)[0].icao} | ${Object.keys(element)[0]}`;
-				fieldValue = `${Object.values(element)[0].status} <@${Object.values(element)[0].lastStatusEditUserID}>`;
-			}
+			const nameValue = `${Object.values(element)[0].icao} | ${Object.keys(element)[0]}`;
+			const fieldValue = `${Object.values(element)[0].status} <@${Object.values(element)[0].lastStatusEditUserID}>`;
     
 			embedFields.push({ name: nameValue, value: fieldValue, inline: false });
 			selectMenuItems.push({ label: `${Object.values(element)[0].icao} | ${Object.keys(element)[0]}`, description: "Edit status", value: Object.keys(element)[0] });

@@ -68,13 +68,7 @@ export async function handleInteraction(interaction: BaseInteraction, client: Di
 			const selectMenuItems: RestOrArray<APISelectMenuOption> = [];
 			yamlDoc.aircraft.forEach(element => {
 
-				// Check if an aircraft has an active booking and set its field value layout to look accordingly
-				let fieldValue = "";
-				if (Object.values(element)[0].booking.booked) {
-					fieldValue = `:airplane: **[ ${Object.values(element)[0].booking.callsign} - ***${Object.values(element)[0].booking.departureICAO} -> ${Object.values(element)[0].booking.arrivalICAO}*** ]** ${Object.values(element)[0].status} <@${Object.values(element)[0].lastStatusEditUserID}>`;
-				} else {
-					fieldValue = `${Object.values(element)[0].status} <@${Object.values(element)[0].lastStatusEditUserID}>`;
-				}
+				const fieldValue = `${Object.values(element)[0].status} <@${Object.values(element)[0].lastStatusEditUserID}>`;
 
 				embedFields.push({ name: `${Object.values(element)[0].icao} | ${Object.keys(element)[0]}`, value: fieldValue, inline: false });
 				selectMenuItems.push({ label: `${Object.values(element)[0].icao} | ${Object.keys(element)[0]}`, description: "Edit status", value: Object.keys(element)[0] });

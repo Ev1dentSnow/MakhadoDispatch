@@ -16,14 +16,6 @@ export interface Aircraft {
 		icao: string
 		status: string
 		lastStatusEditUserID: string
-		booking: {
-			booked: boolean
-			callsign: null | string
-			departureICAO: null | string
-			arrivalICAO: null | string
-			etd: null | string
-			pilotUserID: null | string
-		}
 	}
 }
 

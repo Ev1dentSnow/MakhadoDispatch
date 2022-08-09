@@ -7,21 +7,7 @@ aircraft:
       ICAO: B738
       status: Parked at FAOR
       lastStatusEditUserID: "21212121"
-      booking:
-        booked: false
-        callsign: null
-        departureICAO: null
-        arrivalICAO: null
-        etd: null
-        pilotUserID: null
   - ZS-AAA:
       ICAO: C182
       status: Flying
       lastStatusEditUserID: "21212121"
-      booking:
-        booked: false
-        callsign: null
-        departureICAO: null
-        arrivalICAO: null
-        etd: null
-        pilotUserID: null

@@ -24,9 +24,9 @@ module.exports = {
 	async execute(interaction: ChatInputCommandInteraction) {
 		
 		// Enusre only management can use this command
-		const requiredRole = "1005835552672723085";
+		const requiredRole = "1005835216025305178";
 		//|| !interaction.guild?.members.cache.get(interaction.user.id)?.roles.cache.has(requiredRole)
-		if (interaction.user.id !== "238360513082294284") {
+		if (!interaction.guild?.members.cache.get(interaction.user.id)?.roles.cache.has(requiredRole)) {
 			await interaction.reply({ content: "This command is for use by management only", ephemeral: true });
 			return;
 		}
@@ -40,14 +40,6 @@ module.exports = {
 				icao: ICAO,
 				status: status,
 				lastStatusEditUserID: interaction.user.id,
-				booking: {
-					booked: false,
-					callsign: "",
-					departureICAO: "",
-					arrivalICAO: "",
-					etd: "",
-					pilotUserID: ""
-				}
 			}	
 		};
 
@@ -65,8 +57,8 @@ module.exports = {
 					buildStatusEmbed(yamlDoc)
 					//@ts-ignore
 						.then(async messageComponents => await interaction.reply({ embeds: [messageComponents.embed], components: [messageComponents.row]}))
-						.catch(async reason => await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true}));})
-				.catch(async error => await interaction.reply({content: `${registration} removed from fleet successfully`, ephemeral: true}));
+						.catch(async reason => await interaction.reply({content: `${registration} added to fleet successfully`, ephemeral: true}));})
+				.catch(async error => await interaction.reply({content: `${registration} added to fleet successfully`, ephemeral: true}));
 		}
 
 	}
