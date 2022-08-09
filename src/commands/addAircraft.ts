@@ -49,12 +49,15 @@ module.exports = {
 		const dir = path.join(__dirname, "../config/fleet.yaml");
 		const yamlDoc = <YamlDoc>yaml.load(fs.readFileSync(dir, "utf-8"));
 
-		yamlDoc.aircraft.forEach(async (element, index) => {
-			if (Object.keys(element)[index] === registration) {
-				await interaction.reply({ content: "An aircraft with this registration already exists. Use /remove-aircraft to remove it first", ephemeral: true });
-				return;
-			}
-		});
+		if (yamlDoc.aircraft.length > 0) {
+			yamlDoc.aircraft.forEach(async (element, index) => {
+				if (Object.keys(element)[index] === registration) {
+					await interaction.reply({ content: "An aircraft with this registration already exists. Use /remove-aircraft to remove it first", ephemeral: true });
+					return;
+				}
+			});
+		}
+
 		yamlDoc.aircraft.push(newAircraft);
 
 		// Delete old status embed to make to new one with new aircraft in it. If status message doesn't exist, create a new one without deletion
