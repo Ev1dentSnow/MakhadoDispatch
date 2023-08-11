@@ -85,14 +85,13 @@ async function fetchFlightData(): Promise<processedFlightData | undefined> {
 			}
 			return { aircraftList: aircraft, airports: airports };
 		}
-		// No aircraft flying
+		// No aircraft currently flying
 		else if (response.status == 404) {
 			return;
 		}
 		else {
 			return;
 		}
-
 	} 
 	catch (error) {
 		console.error(error);

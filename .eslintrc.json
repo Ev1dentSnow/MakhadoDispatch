@@ -32,7 +32,7 @@
             "error",
             "always"
         ],
-        "allowTemplateLiterals": 1,
+        "allowTemplateLiterals": 0,
         "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/no-constant-condition": "off",
         "@typescript-eslint/no-var-requires": "off"

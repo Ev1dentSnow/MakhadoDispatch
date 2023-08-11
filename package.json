@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "@sapphire/framework": "^4.5.1",
+    "@sapphire/plugin-scheduled-tasks": "^7.1.1",
     "@types/leaflet": "^1.9.3",
     "arc": "^0.1.4",
     "axios": "^1.4.0",

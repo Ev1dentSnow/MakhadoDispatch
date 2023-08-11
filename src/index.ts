@@ -1,4 +1,5 @@
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
+import "@sapphire/plugin-scheduled-tasks/register";
 import { SapphireClient } from "@sapphire/framework";
 import { GatewayIntentBits } from "discord.js";
 import path from "path";

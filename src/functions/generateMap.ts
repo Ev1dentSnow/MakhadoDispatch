@@ -61,9 +61,9 @@ async function generateMap(aircraftList: Array<aircraft>, airports: Array<airpor
 	const page = await browser.newPage();
 
 	const template = Handlebars.compile(mapTemplate);
-	await page.setContent();
+	//await page.setContent();
 
-	await page.waitForSelector("#map");
+	//await page.waitForSelector("#map");
 
 	const screenshot = await page.screenshot();
 
