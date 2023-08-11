@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    
+<head>
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+   crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+   crossorigin=""></script>
+</head>
+
+<body>
+  <div id="map" style="width: 100%; height: 400px;"></div>
+  <script>
+    // Use the provided locations to set the map center and markers
+    const map = L.map('map').setView([{{locations.[0]}}], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Define aircraft icon
+    const customIcon = L.Icon.extend({
+      options: {
+          shadowUrl: 'aircraft.png',
+          iconSize:     [60, 60],
+          shadowSize:   [0, 0],
+          iconAnchor:   [22, 94],
+          shadowAnchor: [4, 62],
+          popupAnchor:  [-3, -76]
+      }
+    });
+
+    const aircraftIcon = new customIcon({iconUrl: 'aircraft.png'})
+
+    // Add aircraft icons to map
+    {{#each aircraftList}}
+    const callsign = {{this.callsign}}
+    {{#with coordinates}}
+    L.marker([{{x}} {{y}}], {icon: aircraftIcon})
+            .bindLabel(callsign, { noHide: true })
+            .addTo(map);
+    {{/with}}
+    {{/each}}
+  </script>
+</body>
+
+</html>
