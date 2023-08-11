@@ -1,5 +1,6 @@
 import fs from "fs";
 import { parse } from "csv-parse";
+import path from "path";
 
 export interface coordinates {
     x: number,
@@ -14,9 +15,10 @@ export default function fetchAirportCoordinates (airportICAO: string) {
 		const coordinates: coordinates = {x: 0, y: 0};
 
 		// Asynchronously parse airport database csv file
-		fs.createReadStream("../util/airport_data/airports.csv")
-			.pipe(parse((({ delimiter: ",", from_line: 2 }))))
-			.on("row", (row: Array<string>) => {
+		const filePath = path.join(__dirname, "..", "util", "airport_data", "airports.csv");
+		fs.createReadStream(filePath)
+			.pipe(parse({ delimiter: ",", from_line: 2 }))
+			.on("data", (row: Array<string>) => {
 				// If a match is detected, assign the appropriate column as its coordinates
 				if (row[1] === airportICAO) {
 					coordinates.x = Number(row[4]);

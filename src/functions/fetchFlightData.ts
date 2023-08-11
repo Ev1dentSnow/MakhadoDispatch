@@ -2,6 +2,7 @@ import axios from "axios";
 import fetchAirportCoordinates from "../functions/fetchAirportCoordinates";
 import { aircraft, airportCoordinates } from "../functions/generateMap";
 import { coordinates } from "../functions/fetchAirportCoordinates";
+import "dotenv/config";
 
 interface FTWResponseData {
     username: string,
@@ -30,70 +31,60 @@ interface processedFlightData {
 }
 
 // Fetch flight FTWData from FTW API and process it for generateMap function
-async function fetchFlightData(): Promise<processedFlightData | undefined> {
+export default async function fetchFlightData(): Promise<processedFlightData> {
 
 	const aircraft: Array<aircraft> = [];
 	const airports: Array<airportCoordinates> = [];
 
-	try {
-		const response = await axios.get(<string>process.env.FTWURL, { headers: {"readaccesskey": <string>process.env.FTWKEY} });
-        
-		// There are airplanes are curently flying
-		if (response.status == 200) {
+	
+	const response = await axios.get(<string>process.env.FTWURL, { headers: {"readaccesskey": <string>process.env.FTWKEY} });
 
-			const FTWData = <Array<FTWResponseData>>response.data;
+	// There are airplanes are curently flying
+	if (response.status == 200) {
 
-			// Iterate through list of live flights returned by API
-			for (let i = 0; i < FTWData.length; i++) {
-				const departureICAO = FTWData[i].departureICAO;
-				const arrivalICAO = FTWData[i].arrivalICAO;
-				const callsign = FTWData[i].flightNumber;
-				const aircraftCoordinates = { x: FTWData[i].lastPositionLatitude, y: FTWData[i].lastPositionLongitude };
-				let departureAirportCoordinates: coordinates = {x: 0, y: 0};
-				let arrivalAirportCoordinates: coordinates = {x: 0, y: 0};
-				// Get airport coordinates
-				try {
+		const FTWData = <Array<FTWResponseData>>response.data;
+		// Iterate through list of live flights returned by API
+		for (let i = 0; i < FTWData.length; i++) {
+			const departureICAO = FTWData[i].departureICAO;
+			const arrivalICAO = FTWData[i].arrivalICAO;
+			const callsign = FTWData[i].flightNumber;
+			const aircraftCoordinates = { x: FTWData[i].lastPositionLatitude, y: FTWData[i].lastPositionLongitude };
+			let departureAirportCoordinates: coordinates = {x: 0, y: 0};
+			let arrivalAirportCoordinates: coordinates = {x: 0, y: 0};
+			// Get airport coordinates
 
-					departureAirportCoordinates = (await fetchAirportCoordinates(departureICAO));
-					arrivalAirportCoordinates = (await fetchAirportCoordinates(arrivalICAO));
+			departureAirportCoordinates = await fetchAirportCoordinates(departureICAO);
+			arrivalAirportCoordinates = await fetchAirportCoordinates(arrivalICAO);
 
-					// Add current aircraft to respective array
-					aircraft.push({
-						callsign: callsign,
-						coordinates: {
-							x: aircraftCoordinates.x,
-							y: aircraftCoordinates.y
-						}
-					});
-
-					// Add departure and arrival airport to respective array
-					airports.push({
-						departureCoordinates: {
-							x: departureAirportCoordinates.x,
-							y: departureAirportCoordinates.y
-						},
-						arrivalCoordinates: {
-							x: arrivalAirportCoordinates.x,
-							y: arrivalAirportCoordinates.y
-						}
-					});
-
+			// Add current aircraft to respective array
+			aircraft.push({
+				callsign: callsign,
+				coordinates: {
+					x: aircraftCoordinates.x,
+					y: aircraftCoordinates.y
 				}
-				catch (error) {
-					console.error(error);
+			});
+
+			// Add departure and arrival airport to respective array
+			airports.push({
+				departureCoordinates: {
+					x: departureAirportCoordinates.x,
+					y: departureAirportCoordinates.y
+				},
+				arrivalCoordinates: {
+					x: arrivalAirportCoordinates.x,
+					y: arrivalAirportCoordinates.y
 				}
-			}
-			return { aircraftList: aircraft, airports: airports };
+			});
 		}
-		// No aircraft currently flying
-		else if (response.status == 404) {
-			return;
-		}
-		else {
-			return;
-		}
-	} 
-	catch (error) {
-		console.error(error);
+		return { aircraftList: aircraft, airports: airports };
 	}
-}
+	// No aircraft currently flying
+	else if (response.status == 404) {
+		return { aircraftList: [], airports: [] };
+	}
+	else {
+		throw Error(`Server responded with: ${response.status}: ${response.statusText}`);
+	}
+} 
+	

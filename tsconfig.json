@@ -1,5 +1,5 @@
 {
-  "exclude": [         "node_modules"         ],
+  "exclude": [         "**/node_modules", "jest.config.js", "jest.config.ts", "tests"         ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 

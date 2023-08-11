@@ -4,15 +4,17 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "npm run build && node ."
+    "start": "npm run build && node .",
+    "test": "jest --verbose false"
   },
   "author": "Ev1dentSnow",
   "license": "MIT",
   "dependencies": {
+    "@jest/globals": "^29.6.2",
     "@sapphire/framework": "^4.5.1",
     "@sapphire/plugin-scheduled-tasks": "^7.1.1",
+    "@types/jest": "^29.5.3",
     "@types/leaflet": "^1.9.3",
     "arc": "^0.1.4",
     "axios": "^1.4.0",
@@ -20,9 +22,13 @@
     "discord.js": "^14.12.1",
     "dotenv": "^16.0.1",
     "handlebars": "^4.7.8",
+    "jest": "^29.6.2",
     "js-yaml": "^4.1.0",
     "leaflet": "^1.9.4",
-    "puppeteer": "^21.0.2"
+    "puppeteer": "^21.0.2",
+    "redis": "^4.6.7",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",

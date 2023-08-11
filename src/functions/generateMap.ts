@@ -30,7 +30,7 @@ export interface airportCoordinates {
   }
 }
 
-async function generateMap(aircraftList: Array<aircraft>, airports: Array<airportCoordinates>) {
+export default async function generateMap(aircraftList: Array<aircraft>, airports: Array<airportCoordinates>) {
 
 	// Data to be passed to handlebars template to generate markers etc on leaflet map
 	const handleBarsTemplateData = {};
