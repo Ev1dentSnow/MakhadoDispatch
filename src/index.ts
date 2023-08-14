@@ -3,7 +3,7 @@ import "@sapphire/plugin-scheduled-tasks/register";
 import { SapphireClient } from "@sapphire/framework";
 import { GatewayIntentBits } from "discord.js";
 import { createClient, RedisClientType } from "redis";
-import populateAirportDatabase from "./functions/populateAirportDatabase";
+import populateAirportDatabase from "./functions/database/populateAirportDatabase";
 import path from "path";
 
 dotenv.config({path: path.join(__dirname, "../.env")});
