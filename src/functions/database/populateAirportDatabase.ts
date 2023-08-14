@@ -18,8 +18,6 @@ export default async function populateAirportDatabase(redisClient: RedisClientTy
 	// push each airport as a hash to the Redis database
 	let counter = 0;
 	for await (const record of parser) {
-		// eslint-disable-next-line no-debugger
-		debugger;
 		csvData.push(record);
 		await redisClient.hSet(
 			csvData[counter][1],
