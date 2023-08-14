@@ -4,7 +4,7 @@ import { aircraft, airportCoordinates } from "../functions/generateMap";
 import { coordinates } from "../functions/fetchAirportCoordinates";
 import "dotenv/config";
 
-interface FTWResponseData {
+export interface FTWResponseData {
     username: string,
     flightNumber: string,
     flightCreatedAt: string,
@@ -25,7 +25,7 @@ interface FTWResponseData {
     lastPositionLongitude: number
 }
 
-interface processedFlightData {
+export interface processedFlightData {
     aircraftList: Array<aircraft>,
     airports: Array<airportCoordinates>
 }

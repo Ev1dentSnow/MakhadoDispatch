@@ -15,22 +15,7 @@ export default function fetchAirportCoordinates (airportICAO: string) {
 		const coordinates: coordinates = {x: 0, y: 0};
 
 		// Asynchronously parse airport database csv file
-		const filePath = path.join(__dirname, "..", "util", "airport_data", "airports.csv");
-		fs.createReadStream(filePath)
-			.pipe(parse({ delimiter: ",", from_line: 2 }))
-			.on("data", (row: Array<string>) => {
-				// If a match is detected, assign the appropriate column as its coordinates
-				if (row[1] === airportICAO) {
-					coordinates.x = Number(row[4]);
-					coordinates.y = Number(row[5]);
-				}
-			})
-			.on("end", () => {
-				resolve(coordinates);
-			})
-			.on("error", (error) => {
-				reject(error);
-			});
+
 	});
 
 

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "npm run build && node .",
-    "test": "jest --verbose false"
+    "test": "jest --verbose true"
   },
   "author": "Ev1dentSnow",
   "license": "MIT",

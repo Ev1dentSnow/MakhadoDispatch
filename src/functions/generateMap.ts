@@ -6,9 +6,6 @@ const arc = require("arc");
 
 export interface handlebarsTemplateData {
   aircraft: Array<aircraft>,
-  greatCircleRouteData: {
-
-  }
 }
 
 export interface aircraft {
