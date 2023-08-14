@@ -33,36 +33,4 @@ export default async function populateAirportDatabase(redisClient: RedisClientTy
 		);
 		counter++;
 	}
-
-	
-
-
-
-
-	/*
-		.on("data", (row: Array<string>) => {
-			// each "airport" is an array. Each "csv column" is represented as an element of that array. This csvData is a 2 dimensional array
-			csvData.push(row);
-		})
-		.on("end", () => {
-
-			// push each airport as a hash to the Redis database
-			for (let i = 0; i < csvData.length; i++) {
-				redisClient.hSet(
-					// key = airport ICAO code (second CSV column)
-					csvData[i][1],
-					{
-						id: csvData[i][0],
-						ident: csvData[i][1],
-						name: csvData[i][3],
-						latitude_deg: csvData[i][4],
-						longitude_deg: csvData[i][5]
-					}
-				);
-			}
-		})
-		.on("error", (error) => {
-			throw error;
-		});
-		*/
 }
