@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
-import { coordinates } from "../fetchAirportCoordinates";
-import fetchAirportCoordinates from "../fetchAirportCoordinates";
+import { coordinates } from "../database/fetchAirportCoordinates";
+import fetchAirportCoordinates from "../database/fetchAirportCoordinates";
 import { aircraft, airportCoordinates } from "../generateMap";
 
 
